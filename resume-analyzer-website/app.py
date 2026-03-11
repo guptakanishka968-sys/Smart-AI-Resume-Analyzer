@@ -369,7 +369,7 @@ with tab1:
                 alpha=0.6
             )
             plt.ylabel("Skill Status (1=Have, 0=Missing)")
-        ]   plt.title(f"Skill Gap for {predicted_role}")
+            plt.title(f"Skill Gap for {predicted_role}")
             plt.xticks(rotation=45)
             st.pyplot(plt)
             # ---------------------------
@@ -448,6 +448,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
