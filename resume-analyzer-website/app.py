@@ -268,97 +268,94 @@ with tab1:
 
         if uploaded_file:
 
-            # ---------------------------
-            # Extract text from resume
-            # ---------------------------
-            resume_text = extract_text(uploaded_file)
-            st.success(f"{uploaded_file.name} uploaded successfully")
-
-            # ---------------------------
-            # Detect skills from resume
-            # ---------------------------
-            found_skills = [skill for skill in skills if skill.lower() in resume_text.lower()]
-
-            # ---------------------------
-            # Predict role and missing skills
-            # ---------------------------
-            predicted_role = predict_role(found_skills)
-            missing_skills = [s for s in roles[predicted_role] if s not in found_skills]
-
-            # ---------------------------
-            # Automatic ATS Simulation
-            # ---------------------------
-            required_skills = roles[predicted_role]  # Skills required for this role
-            matched_skills = [s for s in required_skills if s in found_skills]
-            ats_score = int(len(matched_skills) / len(required_skills) * 100) if required_skills else 0
-
-            st.subheader("ATS Simulation")
-            st.write(f"✅ **Predicted Role:** {predicted_role}")
-            st.write(f"✅ **ATS Match Score:** {ats_score}%")
-            st.write(f"**Matched Skills:** {', '.join(matched_skills) if matched_skills else 'None'}")
-            missing_from_role = [s for s in required_skills if s not in matched_skills]
-            st.write(f"**Missing Skills:** {', '.join(missing_from_role) if missing_from_role else 'None'}")
-            st.progress(ats_score / 100)
+    # ---------------------------
+    # Extract text from resume
+    # ---------------------------
+    resume_text = extract_text(uploaded_file)
+    st.success(f"{uploaded_file.name} uploaded successfully")
 
     # ---------------------------
-    # Column 2: Skills display, Graphs & WordCloud
+    # Detect skills from resume
     # ---------------------------
-    with col2:
+    found_skills = [skill for skill in skills if skill.lower() in resume_text.lower()]
 
-        if uploaded_file:
+    # ---------------------------
+    # Predict role and missing skills
+    # ---------------------------
+    predicted_role = predict_role(found_skills)
+    missing_skills = [s for s in roles[predicted_role] if s not in found_skills]
 
-            # Display detected skills
-            st.subheader("Detected Skills")
-            st.write(", ".join(found_skills) if found_skills else "No skills detected")
+    # ---------------------------
+    # Enhanced ATS Simulation (Skills + Experience + Projects)
+    # ---------------------------
+    resume_text_lower = resume_text.lower()
 
-            # Display missing skills for predicted role
-            st.subheader("Missing Skills for Predicted Role")
-            st.write(", ".join(missing_skills) if missing_skills else "None")
+    # Count experience and project mentions
+    experience_keywords = ["internship", "work experience", "worked at", "role", "position"]
+    project_keywords = ["project", "developed", "built", "implemented"]
 
-            # ---------------------------
-            # Graphs
-            # ---------------------------
-            st.subheader("Skills Graph")
-            if found_skills:
-                fig = create_skill_graph(found_skills, roles[predicted_role])  # Your existing graph function
-                st.pyplot(fig)
+    experience_count = sum(1 for line in resume_text_lower.split("\n") if any(word in line for word in experience_keywords))
+    project_count = sum(1 for line in resume_text_lower.split("\n") if any(word in line for word in project_keywords))
 
-            # ---------------------------
-            # WordCloud
-            # ---------------------------
-            st.subheader("Skills WordCloud")
-            if found_skills:
-                wc = create_wordcloud(found_skills)  # Your existing WordCloud function
-                st.pyplot(wc)
-# ------------------------------
-# TAB 2
-# ------------------------------
-with tab2:
+    # Skills
+    required_skills = [s.lower() for s in roles[predicted_role]]
+    matched_skills = [s for s in required_skills if s in found_skills]
 
-    st_lottie(lottie_skills, height=120)
+    # Weights
+    skill_weight = 0.6
+    experience_weight = 0.2
+    project_weight = 0.2
 
-    st.subheader("Trending Skills Recommendations")  # Heading always visible
+    # Individual scores
+    skill_score = len(matched_skills) / len(required_skills) if required_skills else 0
+    experience_score = min(experience_count / 5, 1)
+    project_score = min(project_count / 5, 1)
 
-    # Initialize toggle state for button
-    if "show_trending" not in st.session_state:
-        st.session_state["show_trending"] = False
+    # Final ATS Score
+    ats_score = int((skill_score*skill_weight + experience_score*experience_weight + project_score*project_weight) * 100)
 
-    # Streamlit native button styled via CSS (preferred)
-    if st.button("Show Trending Skills"):
-        st.session_state["show_trending"] = True  # Toggle to show skills
+    # Display ATS
+    st.subheader("ATS Simulation (Skills + Experience + Projects)")
+    st.write(f"✅ **Predicted Role:** {predicted_role}")
+    st.write(f"✅ **ATS Score:** {ats_score}%")
+    st.write("Matched Skills:", ", ".join(matched_skills) if matched_skills else "None")
+    missing_from_role = [s for s in required_skills if s not in matched_skills]
+    st.write("Missing Skills:", ", ".join(missing_from_role) if missing_from_role else "None")
+    st.write(f"Experience Mentions: {experience_count}")
+    st.write(f"Project Mentions: {project_count}")
+    st.progress(ats_score / 100)
 
-    # Display trending skills numbered
-    if st.session_state["show_trending"]:
-        if trending_skills:
-            for i, skill in enumerate(trending_skills, start=1):
-                st.markdown(
-                    f"<div style='background-color:#e3f2fd;"
-                    f"padding:10px; margin:5px; border-radius:6px;"
-                    f"color:#0d47a1; font-weight:600;'>{i}. {skill}</div>",
-                    unsafe_allow_html=True
-                )
-        else:
-            st.write("No trending skills found!")
+# ---------------------------
+# Column 2: Skills display, Graphs & WordCloud
+# ---------------------------
+with col2:
+
+    if uploaded_file:
+
+        # Display detected skills
+        st.subheader("Detected Skills")
+        st.write(", ".join(found_skills) if found_skills else "No skills detected")
+
+        # Display missing skills for predicted role
+        st.subheader("Missing Skills for Predicted Role")
+        st.write(", ".join(missing_skills) if missing_skills else "None")
+
+        # ---------------------------
+        # Graphs
+        # ---------------------------
+        skill_counts = [1 for skill in found_skills]  # or your previous logic
+        fig, ax = plt.subplots()
+        ax.bar(found_skills, skill_counts)
+        st.pyplot(fig)
+
+        # ---------------------------
+        # WordCloud
+        # ---------------------------
+        wordcloud = WordCloud(width=800, height=400).generate(" ".join(found_skills))
+        fig_wc, ax_wc = plt.subplots(figsize=(8,4))
+        ax_wc.imshow(wordcloud, interpolation='bilinear')
+        ax_wc.axis('off')
+        st.pyplot(fig_wc)
 # ------------------------------
 # TAB 3
 # ------------------------------
@@ -427,6 +424,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
