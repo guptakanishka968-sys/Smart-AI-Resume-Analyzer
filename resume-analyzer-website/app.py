@@ -5,6 +5,7 @@ import streamlit as st
 import pdfplumber
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+import os
 import json
 from streamlit_lottie import st_lottie
 
@@ -20,7 +21,7 @@ st.set_page_config(
 # Load Lottie Files (LOCAL)
 # ------------------------------
 def load_lottiefile(filepath):
-    with open(filepath, "r") as f:
+    with open(os.path.join(filepath), "r") as f:
         return json.load(f)
 
 lottie_logo = load_lottiefile("lottie/logo.json")
@@ -420,4 +421,5 @@ for i, record in enumerate(st.session_state.history):
     st.write(f"{i+1}. {record['file_name']} → {record['predicted_role']}")
     st.write("Skills Found:", ", ".join(record["skills_found"]) if record["skills_found"] else "No skills found")
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
+
     st.markdown("---")
