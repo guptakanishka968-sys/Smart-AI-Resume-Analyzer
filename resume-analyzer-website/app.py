@@ -254,20 +254,39 @@ with tab1:
     col1, col2 = st.columns([1,2])
 
     with col1:
-
         st_lottie(lottie_upload, height=120)
-
         uploaded_file = st.file_uploader(
             "Upload Resume PDF",
             type="pdf"
         )
 
-        if uploaded_file:
+    # After col1 & col2, check if a file is uploaded
+    if uploaded_file:
+        resume_text = extract_text(uploaded_file)
+        st.success(f"{uploaded_file.name} uploaded successfully")
 
-            resume_text = extract_text(uploaded_file)
+        # ATS simulation goes here
+        st.subheader("ATS Simulation")
+        job_desc = st.text_area(
+            "Paste the job description here to simulate ATS scoring",
+            height=150
+        )
 
-            st.success(f"{uploaded_file.name} uploaded successfully")
+        if job_desc:
+            job_desc_text = job_desc.lower()
+            # Use your existing skills list
+            required_skills = [skill for skill in skills if skill in job_desc_text]
 
+            # Find matched skills (you may need to extract them from resume here)
+            # For example, using your existing function or simple matching
+            matched_skills = [s for s in required_skills if s in resume_text.lower()]
+            ats_score = int(len(matched_skills) / len(required_skills) * 100) if required_skills else 0
+
+            st.write(f"✅ **ATS Match Score:** {ats_score}%")
+            st.write(f"**Matched Skills:** {', '.join(matched_skills) if matched_skills else 'None'}")
+            missing_from_job = [s for s in required_skills if s not in matched_skills]
+            st.write(f"**Missing Skills:** {', '.join(missing_from_job) if missing_from_job else 'None'}")
+            st.progress(ats_score / 100)
     with col2:
        if uploaded_file:
         # Extract text from resume
@@ -433,6 +452,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
