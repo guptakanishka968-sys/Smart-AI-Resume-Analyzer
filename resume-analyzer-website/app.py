@@ -361,7 +361,7 @@ with tab1:
 
             st.subheader("Skill Gap Graph")
             plt.figure(figsize=(10, 4))
-            for resume_name, status in st.session_state.skill_history.items():
+        for resume_name, status in st.session_state.skill_history.items():
             plt.bar(
                 [f"{s} ({resume_name})" for s in roles[predicted_role]],
                 status,
@@ -448,6 +448,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
