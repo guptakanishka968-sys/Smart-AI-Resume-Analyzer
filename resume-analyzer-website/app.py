@@ -371,6 +371,35 @@ with tab1:
             ax_wc.axis('off')
             st.pyplot(fig_wc)
 # ------------------------------
+# ---------------------------
+# TAB 2: Trending Skills Recommendations
+# ---------------------------
+with tab2:
+
+    st_lottie(lottie_skills, height=120)
+
+    st.subheader("Trending Skills Recommendations")  # Heading always visible
+
+    # Initialize toggle state for button
+    if "show_trending" not in st.session_state:
+        st.session_state["show_trending"] = False
+
+    # Streamlit button
+    if st.button("Show Trending Skills"):
+        st.session_state["show_trending"] = True  # Toggle to show skills
+
+    # Display trending skills numbered
+    if st.session_state["show_trending"]:
+        if trending_skills:
+            for i, skill in enumerate(trending_skills, start=1):
+                st.markdown(
+                    f"<div style='background-color:#e3f2fd;"
+                    f"padding:10px; margin:5px; border-radius:6px;"
+                    f"color:#0d47a1; font-weight:600;'>{i}. {skill}</div>",
+                    unsafe_allow_html=True
+                )
+        else:
+            st.write("No trending skills found!")
 # TAB 3
 # ------------------------------
 with tab3:
@@ -438,6 +467,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
