@@ -249,112 +249,87 @@ uploaded_file = None
 # ------------------------------
 # TAB 1
 # ------------------------------
+# ---------------------------
+# Tab 1: Resume Upload & ATS Simulation
+# ---------------------------
 with tab1:
 
     col1, col2 = st.columns([1,2])
 
+    # ---------------------------
+    # Column 1: File uploader + animation
+    # ---------------------------
     with col1:
         st_lottie(lottie_upload, height=120)
+
         uploaded_file = st.file_uploader(
             "Upload Resume PDF",
             type="pdf"
         )
 
-    # After col1 & col2, check if a file is uploaded
-    if uploaded_file:
-        resume_text = extract_text(uploaded_file)
-        st.success(f"{uploaded_file.name} uploaded successfully")
+        if uploaded_file:
 
-        # ATS simulation goes here
-        st.subheader("ATS Simulation")
-        job_desc = st.text_area(
-            "Paste the job description here to simulate ATS scoring",
-            height=150
-        )
+            # Extract text from resume
+            resume_text = extract_text(uploaded_file)
+            st.success(f"{uploaded_file.name} uploaded successfully")
 
-        if job_desc:
-            job_desc_text = job_desc.lower()
-            # Use your existing skills list
-            required_skills = [skill for skill in skills if skill in job_desc_text]
+            # Detect skills from the resume
+            found_skills = [skill for skill in skills if skill.lower() in resume_text.lower()]
 
-            # Find matched skills (you may need to extract them from resume here)
-            # For example, using your existing function or simple matching
-            matched_skills = [s for s in required_skills if s in resume_text.lower()]
-            ats_score = int(len(matched_skills) / len(required_skills) * 100) if required_skills else 0
+            # Predict role
+            predicted_role = predict_role(found_skills)
 
-            st.write(f"✅ **ATS Match Score:** {ats_score}%")
-            st.write(f"**Matched Skills:** {', '.join(matched_skills) if matched_skills else 'None'}")
-            missing_from_job = [s for s in required_skills if s not in matched_skills]
-            st.write(f"**Missing Skills:** {', '.join(missing_from_job) if missing_from_job else 'None'}")
-            st.progress(ats_score / 100)
-    with col2:
-       if uploaded_file:
-        # Extract text from resume
-        resume_text = extract_text(uploaded_file)
-        
-        # Detect skills (ensure this returns actual skill names)
-        found_skills = [skill for skill in skills if skill.lower() in resume_text.lower()]
-        predicted_role = predict_role(found_skills)
-        missing_skills = [s for s in roles[predicted_role] if s not in found_skills]
+            # Find missing skills for predicted role
+            missing_skills = [s for s in roles[predicted_role] if s not in found_skills]
 
-        # ---------------------------
-        # Skills Found (Indexed)
-        # ---------------------------
-        st.subheader("Skills Found")
-        if found_skills:
-            for i, skill in enumerate(found_skills, start=1):
-                st.write(f"{i}. {skill}")  # Numbered skill names
-        else:
-            st.write("No skills detected in resume.")
+            # ---------------------------
+            # ATS Simulation
+            # ---------------------------
+            st.subheader("ATS Simulation")
 
-        # ---------------------------
-        # Missing Skills (Indexed)
-        # ---------------------------
-        st.subheader("Missing Skills")
-        if missing_skills:
-            for i, skill in enumerate(missing_skills, start=1):
-                st.write(f"{i}. {skill}")  # Numbered missing skill names
-        else:
-            st.write("No missing skills! Great job!")
-
-        # ---------------------------
-        # Dynamic Skill Gap Graph
-        # ---------------------------
-        if "skill_history" not in st.session_state:
-            st.session_state.skill_history = {}
-
-        st.session_state.skill_history[uploaded_file.name] = [
-            1 if s in found_skills else 0 for s in roles[predicted_role]
-        ]
-
-        st.subheader("Skill Gap Graph")
-        plt.figure(figsize=(10, 4))
-        for resume_name, status in st.session_state.skill_history.items():
-            plt.bar(
-                [f"{s} ({resume_name})" for s in roles[predicted_role]],
-                status,
-                color=['green' if v == 1 else 'red' for v in status],
-                alpha=0.6
+            job_desc = st.text_area(
+                "Paste the job description here to simulate ATS scoring",
+                height=150
             )
-        plt.ylabel("Skill Status (1=Have, 0=Missing)")
-        plt.title(f"Skill Gap for {predicted_role}")
-        plt.xticks(rotation=45)
-        st.pyplot(plt)
 
-        # ---------------------------
-        # WordCloud for current resume
-        # ---------------------------
-        st.subheader("WordCloud of Skills in Resume")
-        wordcloud = WordCloud(
-            width=600,
-            height=300,
-            background_color="white"
-        ).generate(resume_text)
+            if job_desc:
+                job_desc_text = job_desc.lower()
 
-        plt.figure(figsize=(10,5))
-        plt.imshow(wordcloud, interpolation='bilinear')
-        plt.axis("off")
-        st.pyplot(plt)
+                # Skills mentioned in the job description
+                required_skills = [skill for skill in skills if skill in job_desc_text]
+
+                # Skills from resume that match job description
+                matched_skills = [s for s in required_skills if s in found_skills]
+
+                # ATS Score
+                ats_score = int(len(matched_skills) / len(required_skills) * 100) if required_skills else 0
+
+                st.write(f"✅ **ATS Match Score:** {ats_score}%")
+                st.write(f"**Matched Skills:** {', '.join(matched_skills) if matched_skills else 'None'}")
+                missing_from_job = [s for s in required_skills if s not in matched_skills]
+                st.write(f"**Missing Skills:** {', '.join(missing_from_job) if missing_from_job else 'None'}")
+
+                # Optional progress bar
+                st.progress(ats_score / 100)
+
+    # ---------------------------
+    # Column 2: Existing skills display / graphs / wordcloud
+    # ---------------------------
+    with col2:
+
+        if uploaded_file:
+            st.subheader("Detected Skills")
+            st.write(", ".join(found_skills) if found_skills else "No skills detected")
+
+            st.subheader("Missing Skills for Predicted Role")
+            st.write(", ".join(missing_skills) if missing_skills else "None")
+
+            # ---------------------------
+            # Placeholder for Graphs / WordCloud
+            # ---------------------------
+            st.subheader("Skills Graph / WordCloud")
+            # Example placeholder, replace with your actual graph or WordCloud code
+            st.write("Graph / WordCloud goes here")
 # ------------------------------
 # TAB 2
 # ------------------------------
@@ -452,6 +427,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
