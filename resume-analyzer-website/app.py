@@ -20,10 +20,13 @@ st.set_page_config(
 # ------------------------------
 # Load Lottie Files (LOCAL)
 # ------------------------------
+import json
+from pathlib import Path
+
 def load_lottiefile(filepath):
-    base_dir = os.path.dirname(_file_)
-    full_path = os.path.join(base_dir, filepath)
-    with open(full_path, "r") as f:
+    # Get the absolute path relative to app.py
+    file_path = Path(__file__).parent / filepath
+    with open(file_path, "r") as f:
         return json.load(f)
 
 lottie_logo = load_lottiefile("lottie/logo.json")
@@ -425,4 +428,5 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
