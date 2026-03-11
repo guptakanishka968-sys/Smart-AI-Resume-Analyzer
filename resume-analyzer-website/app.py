@@ -249,6 +249,7 @@ uploaded_file = None
 # ------------------------------
 # TAB 1
 # ---------------------------
+# ---------------------------
 # TAB 1: Resume Upload, Graphs, WordCloud & ATS
 # ---------------------------
 with tab1:
@@ -291,7 +292,6 @@ with tab1:
             # ---------------------------
             resume_text_lower = resume_text.lower()
 
-            # Count experience and project mentions
             experience_keywords = ["internship", "work experience", "worked at", "role", "position"]
             project_keywords = ["project", "developed", "built", "implemented"]
 
@@ -304,31 +304,27 @@ with tab1:
                 if any(word in line for word in project_keywords)
             )
 
-            # Skills
-            required_skills = [s.lower() for s in roles[predicted_role]]
-            matched_skills = [s for s in required_skills if s in found_skills]
+            required_skills_lower = [s.lower() for s in roles[predicted_role]]
+            matched_skills = [s for s in required_skills_lower if s in [fs.lower() for fs in found_skills]]
 
             # Weights
             skill_weight = 0.6
             experience_weight = 0.2
             project_weight = 0.2
 
-            # Individual scores
-            skill_score = len(matched_skills) / len(required_skills) if required_skills else 0
+            skill_score = len(matched_skills) / len(required_skills_lower) if required_skills_lower else 0
             experience_score = min(experience_count / 5, 1)
             project_score = min(project_count / 5, 1)
 
-            # Final ATS Score
             ats_score = int(
                 (skill_score*skill_weight + experience_score*experience_weight + project_score*project_weight) * 100
             )
 
-            # Display ATS
             st.subheader("ATS Simulation (Skills + Experience + Projects)")
             st.write(f"✅ **Predicted Role:** {predicted_role}")
             st.write(f"✅ **ATS Score:** {ats_score}%")
             st.write("Matched Skills:", ", ".join(matched_skills) if matched_skills else "None")
-            missing_from_role = [s for s in required_skills if s not in matched_skills]
+            missing_from_role = [s for s in required_skills_lower if s not in matched_skills]
             st.write("Missing Skills:", ", ".join(missing_from_role) if missing_from_role else "None")
             st.write(f"Experience Mentions: {experience_count}")
             st.write(f"Project Mentions: {project_count}")
@@ -341,37 +337,31 @@ with tab1:
 
         if uploaded_file:
 
-            # Display detected skills
+            # Detected skills display
             st.subheader("Detected Skills")
             st.write(", ".join(found_skills) if found_skills else "No skills detected")
 
-            # Display missing skills for predicted role
+            # Missing skills display
             st.subheader("Missing Skills for Predicted Role")
             st.write(", ".join(missing_skills) if missing_skills else "None")
 
             # ---------------------------
-            # Dynamic Skill Gap Graph
-        # ---------------------------
-        if "skill_history" not in st.session_state:
-            st.session_state.skill_history = {}
+            # Graph: Matched vs Missing Skills
+            # ---------------------------
+            required_skills_lower = [s.lower() for s in roles[predicted_role]]
+            found_skills_lower = [s.lower() for s in found_skills]
 
-            st.session_state.skill_history[uploaded_file.name] = [
-            1 if s in found_skills else 0 for s in roles[predicted_role]
-            ]
+            skill_counts = [1 if s in found_skills_lower else 0 for s in required_skills_lower]
+            colors = ['green' if val == 1 else 'red' for val in skill_counts]
 
-            st.subheader("Skill Gap Graph")
-            plt.figure(figsize=(10, 4))
-        for resume_name, status in st.session_state.skill_history.items():
-            plt.bar(
-                [f"{s} ({resume_name})" for s in roles[predicted_role]],
-                status,
-                color=['green' if v == 1 else 'red' for v in status],
-                alpha=0.6
-            )
-            plt.ylabel("Skill Status (1=Have, 0=Missing)")
-            plt.title(f"Skill Gap for {predicted_role}")
-            plt.xticks(rotation=45)
-            st.pyplot(plt)
+            fig, ax = plt.subplots(figsize=(8,4))
+            ax.bar(required_skills_lower, skill_counts, color=colors)
+            ax.set_ylim(0, 1.2)
+            ax.set_ylabel("Matched (1) or Missing (0)")
+            ax.set_title("Skills Match for Predicted Role")
+            plt.xticks(rotation=45, ha='right')
+            st.pyplot(fig)
+
             # ---------------------------
             # WordCloud
             # ---------------------------
@@ -448,6 +438,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
