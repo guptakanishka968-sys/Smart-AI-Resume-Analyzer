@@ -21,7 +21,9 @@ st.set_page_config(
 # Load Lottie Files (LOCAL)
 # ------------------------------
 def load_lottiefile(filepath):
-    with open(os.path.join(filepath), "r") as f:
+    base_dir = os.path.dirname(_file_)
+    full_path = os.path.join(base_dir, filepath)
+    with open(full_path, "r") as f:
         return json.load(f)
 
 lottie_logo = load_lottiefile("lottie/logo.json")
@@ -423,3 +425,4 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
