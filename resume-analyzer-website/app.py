@@ -180,20 +180,25 @@ div[data-testid="stLottie"] svg {
 """, unsafe_allow_html=True)
 
 # ------------------------------
-# Load Data Files
-# ------------------------------
-with open("skills.txt") as f:
+from pathlib import Path
+
+# Get the folder where app.py is located
+base_path = Path(__file__).parent
+
+# Load skills.txt
+with open(base_path / "skills.txt") as f:
     skills = [line.strip().lower() for line in f]
 
+# Load roles.txt
 roles = {}
-with open("roles.txt") as f:
+with open(base_path / "roles.txt") as f:
     for line in f:
         role, s = line.split(":")
         roles[role.strip()] = [skill.strip().lower() for skill in s.split(",")]
 
-with open("trending_skills.txt") as f:
+# Load trending_skills.txt
+with open(base_path / "trending_skills.txt") as f:
     trending_skills = [line.strip().lower() for line in f]
-
 # ------------------------------
 # Utility Functions
 # ------------------------------
@@ -428,5 +433,6 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
