@@ -352,11 +352,25 @@ with tab1:
             # ---------------------------
             # Graphs
             # ---------------------------
-            skill_counts = [1 for skill in found_skills]  # or your previous logic
-            fig, ax = plt.subplots()
-            ax.bar(found_skills, skill_counts)
-            st.pyplot(fig)
+            # ---------------------------
+            # Graphs: Matched vs Missing Skills
+            # ---------------------------
+            required_skills_lower = [s.lower() for s in roles[predicted_role]]
 
+            # Count 1 if matched, 0 if missing
+            skill_counts = [1 if s in found_skills else 0 for s in required_skills_lower]
+
+            # Colors: green if matched, red if missing
+            colors = ['green' if c==1 else 'red' for c in skill_counts]
+
+            # Plot
+            fig, ax = plt.subplots(figsize=(8,4))
+            ax.bar(required_skills_lower, skill_counts, color=colors)
+            ax.set_ylim(0, 1.2)
+            ax.set_ylabel("Matched (1) or Missing (0)")
+            ax.set_title("Skills Match for Predicted Role")
+            plt.xticks(rotation=45, ha='right')
+            st.pyplot(fig)
             # ---------------------------
             # WordCloud
             # ---------------------------
@@ -433,6 +447,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
