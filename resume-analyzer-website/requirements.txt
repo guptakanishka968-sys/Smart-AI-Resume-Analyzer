@@ -1,0 +1,5 @@
+streamlit
+pdfplumber
+wordcloud
+matplotlib
+streamlit-lottie

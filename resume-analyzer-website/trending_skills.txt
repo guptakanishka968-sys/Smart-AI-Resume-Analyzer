@@ -1,0 +1,12 @@
+docker
+kubernetes
+aws
+azure
+tensorflow
+pytorch
+system design
+microservices
+data engineering
+spark
+kafka
+power bi

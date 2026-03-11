@@ -1,0 +1,4 @@
+Data Analyst: python,sql,excel,pandas,numpy,data visualization,statistics
+Web Developer: html,css,javascript,react,node,git
+Machine Learning Engineer: python,machine learning,deep learning,tensorflow,pytorch
+Software Developer: java,c++,data structures,algorithms,git

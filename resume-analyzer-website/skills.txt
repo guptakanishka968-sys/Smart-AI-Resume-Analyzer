@@ -1,0 +1,21 @@
+python
+java
+c++
+machine learning
+sql
+html
+css
+javascript
+react
+node
+git
+data structures
+algorithms
+excel
+pandas
+numpy
+statistics
+data visualization
+tensorflow
+pytorch
+deep learning
