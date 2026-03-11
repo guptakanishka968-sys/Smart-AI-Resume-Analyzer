@@ -271,78 +271,77 @@ with tab1:
         if uploaded_file:
 
             # ---------------------------
-            # Extract text from resume
+            # 1️⃣ Extract text from resume
             # ---------------------------
             resume_text = extract_text(uploaded_file)
             st.success(f"{uploaded_file.name} uploaded successfully")
 
             # ---------------------------
-            # Detect skills from resume
+            # 2️⃣ Detect skills from resume
             # ---------------------------
             found_skills = [skill for skill in skills if skill.lower() in resume_text.lower()]
 
             # ---------------------------
-            # Predict role and missing skills
+            # 3️⃣ Predict role and missing skills
             # ---------------------------
             predicted_role = predict_role(found_skills)
             missing_skills = [s for s in roles[predicted_role] if s not in found_skills]
 
-            # ---------------------------# ---------------------------
-# Enhanced ATS Simulation (Skills + Experience + Projects)
-# ---------------------------
-resume_text_lower = resume_text.lower()
+            # ---------------------------
+            # 4️⃣ Enhanced ATS Simulation (Skills + Experience + Projects)
+            # ---------------------------
+            resume_text_lower = resume_text.lower()
 
-# Keywords for experience and projects
-experience_keywords = ["internship", "work experience", "worked at", "role", "position"]
-project_keywords = ["project", "developed", "built", "implemented"]
+            experience_keywords = ["internship", "work experience", "worked at", "role", "position"]
+            project_keywords = ["project", "developed", "built", "implemented"]
 
-# Count experience and project mentions once per keyword
-experience_count = sum(1 for word in experience_keywords if word in resume_text_lower)
-project_count = sum(1 for word in project_keywords if word in resume_text_lower)
+            # Count experience and project mentions **once per keyword**
+            experience_count = sum(1 for word in experience_keywords if word in resume_text_lower)
+            project_count = sum(1 for word in project_keywords if word in resume_text_lower)
 
-# Skills matching
-required_skills_lower = [s.lower() for s in roles[predicted_role]]
-found_skills_lower = [s.lower() for s in found_skills]
-matched_skills = [s for s in required_skills_lower if s in found_skills_lower]
+            # Skills matching
+            required_skills_lower = [s.lower() for s in roles[predicted_role]]
+            found_skills_lower = [s.lower() for s in found_skills]
+            matched_skills = [s for s in required_skills_lower if s in found_skills_lower]
 
-# ATS weights
-skill_weight = 0.6
-experience_weight = 0.2
-project_weight = 0.2
+            # ATS weights
+            skill_weight = 0.6
+            experience_weight = 0.2
+            project_weight = 0.2
 
-# Individual scores
-skill_score = len(matched_skills) / len(required_skills_lower) if required_skills_lower else 0
-experience_score = min(experience_count / 5, 1)  # max 100% contribution
-project_score = min(project_count / 5, 1)       # max 100% contribution
+            # Individual scores
+            skill_score = len(matched_skills) / len(required_skills_lower) if required_skills_lower else 0
+            experience_score = min(experience_count / 5, 1)
+            project_score = min(project_count / 5, 1)
 
-# Final ATS score
-ats_score = int(
-    (skill_score*skill_weight + experience_score*experience_weight + project_score*project_weight) * 100
-)
+            # Final ATS score
+            ats_score = int(
+                (skill_score*skill_weight + experience_score*experience_weight + project_score*project_weight) * 100
+            )
 
-# Display ATS results
-st.subheader("ATS Simulation (Skills + Experience + Projects)")
-st.write(f"✅ **Predicted Role:** {predicted_role}")
-st.write(f"✅ **ATS Score:** {ats_score}%")
-st.write("Matched Skills:", ", ".join(matched_skills) if matched_skills else "None")
-missing_from_role = [s for s in required_skills_lower if s not in matched_skills]
-st.write("Missing Skills:", ", ".join(missing_from_role) if missing_from_role else "None")
-st.write(f"Experience Mentions: {experience_count}")
-st.write(f"Project Mentions: {project_count}")
-st.progress(ats_score / 100)
+            # Display ATS results
+            st.subheader("ATS Simulation (Skills + Experience + Projects)")
+            st.write(f"✅ **Predicted Role:** {predicted_role}")
+            st.write(f"✅ **ATS Score:** {ats_score}%")
+            st.write("Matched Skills:", ", ".join(matched_skills) if matched_skills else "None")
+            missing_from_role = [s for s in required_skills_lower if s not in matched_skills]
+            st.write("Missing Skills:", ", ".join(missing_from_role) if missing_from_role else "None")
+            st.write(f"Experience Mentions: {experience_count}")
+            st.write(f"Project Mentions: {project_count}")
+            st.progress(ats_score / 100)
 
     # ---------------------------
     # Column 2: Skills display, Graphs & WordCloud
     # ---------------------------
-with col2:
+    with col2:
 
         if uploaded_file:
 
-            # Detected skills display
+            # Display detected skills
             st.subheader("Detected Skills")
             st.write(", ".join(found_skills) if found_skills else "No skills detected")
 
-            # Missing skills display
+            # Display missing skills for predicted role
             st.subheader("Missing Skills for Predicted Role")
             st.write(", ".join(missing_skills) if missing_skills else "None")
 
@@ -439,6 +438,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
