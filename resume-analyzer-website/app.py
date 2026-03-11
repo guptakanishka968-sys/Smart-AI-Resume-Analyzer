@@ -355,23 +355,23 @@ with tab1:
         if "skill_history" not in st.session_state:
             st.session_state.skill_history = {}
 
-        st.session_state.skill_history[uploaded_file.name] = [
+            st.session_state.skill_history[uploaded_file.name] = [
             1 if s in found_skills else 0 for s in roles[predicted_role]
-        ]
+            ]
 
-        st.subheader("Skill Gap Graph")
-        plt.figure(figsize=(10, 4))
-        for resume_name, status in st.session_state.skill_history.items():
+            st.subheader("Skill Gap Graph")
+            plt.figure(figsize=(10, 4))
+            for resume_name, status in st.session_state.skill_history.items():
             plt.bar(
                 [f"{s} ({resume_name})" for s in roles[predicted_role]],
                 status,
                 color=['green' if v == 1 else 'red' for v in status],
                 alpha=0.6
             )
-        plt.ylabel("Skill Status (1=Have, 0=Missing)")
-        plt.title(f"Skill Gap for {predicted_role}")
-        plt.xticks(rotation=45)
-        st.pyplot(plt)
+            plt.ylabel("Skill Status (1=Have, 0=Missing)")
+        ]   plt.title(f"Skill Gap for {predicted_role}")
+            plt.xticks(rotation=45)
+            st.pyplot(plt)
             # ---------------------------
             # WordCloud
             # ---------------------------
@@ -448,6 +448,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
