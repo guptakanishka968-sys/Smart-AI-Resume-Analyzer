@@ -343,24 +343,24 @@ with tab1:
 
             # Suggest missing skills
             if missing_from_role:
-            suggestions.append("Add these important skills: " + ", ".join(missing_from_role[:5]))
+              suggestions.append("Add these important skills: " + ", ".join(missing_from_role[:5]))
 
             # Suggest more projects
             if project_count < 2:
-            suggestions.append("Add more projects to strengthen your profile.")
+              suggestions.append("Add more projects to strengthen your profile.")
 
             # Suggest experience
             if experience_count == 0:
-            suggestions.append("Include internship or work experience if available.")
+              suggestions.append("Include internship or work experience if available.")
 
             # Suggest measurable achievements
             if "%" not in resume_text:
-            suggestions.append("Add measurable achievements (e.g., improved system by 30%).")
+              suggestions.append("Add measurable achievements (e.g., improved system by 30%).")
 
             # Display suggestions
             if suggestions:
-            for s in suggestions:
-            st.write("•", s)
+              for s in suggestions:
+                st.write("•", s)
             else:
             st.success("Your resume looks strong for ATS!")
 
@@ -516,6 +516,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
