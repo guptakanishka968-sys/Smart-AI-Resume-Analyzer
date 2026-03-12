@@ -436,45 +436,45 @@ with tab3:
 
         q = question.lower()
 
-    if "resume" in q:
-        st.write("Add measurable achievements, projects and quantified results.")
+        if "resume" in q:
+            st.write("Add measurable achievements, projects and quantified results.")
 
-    elif "skills" in q:
-        st.write("Focus on Python, SQL, React, Power BI, Machine Learning.")
+        elif "skills" in q:
+            st.write("Focus on Python, SQL, React, Power BI, Machine Learning.")
 
-    elif "placement" in q or "interview" in q:
-        st.write("Practice DSA, build projects and prepare system design.")
+        elif "placement" in q or "interview" in q:
+            st.write("Practice DSA, build projects and prepare system design.")
 
-    elif "project" in q:
-        st.write("Build 2–4 strong projects that solve real problems and upload them on GitHub.")
+        elif "project" in q:
+            st.write("Build 2–4 strong projects that solve real problems and upload them on GitHub.")
 
-    elif "internship" in q:
-        st.write("Apply on LinkedIn, Internshala and company career portals. Strong projects increase your chances.")
+        elif "internship" in q:
+            st.write("Apply on LinkedIn, Internshala and company career portals. Strong projects increase your chances.")
 
-    elif "coding" in q or "dsa" in q:
-        st.write("Practice data structures and algorithms regularly on platforms like LeetCode and HackerRank.")
+        elif "coding" in q or "dsa" in q:
+            st.write("Practice data structures and algorithms regularly on platforms like LeetCode and HackerRank.")
 
     # Language related keywords
-    elif "python" in q:
-        st.write("Python is widely used in AI, Data Science, Automation and Web Development. Learn libraries like Pandas, NumPy and Flask.")
+        elif "python" in q:
+            st.write("Python is widely used in AI, Data Science, Automation and Web Development. Learn libraries like Pandas, NumPy and Flask.")
 
-    elif "java" in q:
-        st.write("Java is widely used for backend development and enterprise applications. Focus on OOP, Spring Boot and DSA.")
+        elif "java" in q:
+            st.write("Java is widely used for backend development and enterprise applications. Focus on OOP, Spring Boot and DSA.")
 
-    elif "c++" in q or "cpp" in q:
-        st.write("C++ is commonly used for competitive programming and system programming. Master STL and DSA.")
+        elif "c++" in q or "cpp" in q:
+            st.write("C++ is commonly used for competitive programming and system programming. Master STL and DSA.")
 
-    elif "javascript" in q or "js" in q:
-        st.write("JavaScript is essential for web development. Learn React, Node.js and modern ES6 features.")
+        elif "javascript" in q or "js" in q:
+            st.write("JavaScript is essential for web development. Learn React, Node.js and modern ES6 features.")
 
-    elif "sql" in q:
-        st.write("SQL is important for database management. Learn joins, queries, indexing and database optimization.")
+        elif "sql" in q:
+            st.write("SQL is important for database management. Learn joins, queries, indexing and database optimization.")
 
-    elif "machine learning" in q or "ai" in q:
-        st.write("Start with Python, statistics, machine learning algorithms and build ML projects.")
+        elif "machine learning" in q or "ai" in q:
+            st.write("Start with Python, statistics, machine learning algorithms and build ML projects.")
 
-    else:
-        st.write("Focus on projects, internships and real-world skills.")
+        else:
+            st.write("Focus on projects, internships and real-world skills.")
 # ------------------------------
 # Session History
 # ------------------------------
@@ -502,6 +502,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
