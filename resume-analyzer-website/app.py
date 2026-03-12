@@ -441,7 +441,7 @@ with tab3:
         q = question.lower()
 
         if "python" in q and "java" in q:
-        st.write(
+            st.write(
             "**Python vs Java:**\n"
             "• Python – Easier to learn and great for AI, Data Science and automation.\n"
             "• Java – Very strong for backend systems and enterprise applications.\n\n"
@@ -450,7 +450,7 @@ with tab3:
         )
 
         elif "language" in q and ("placement" in q or "job" in q):
-        st.write(
+            st.write(
             "For placements, the most useful programming languages are:\n"
             "1️⃣ Python – Great for AI, Data Science and automation.\n"
             "2️⃣ Java – Popular for backend and enterprise companies.\n"
@@ -525,6 +525,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
