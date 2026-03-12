@@ -205,15 +205,19 @@ with open(base_path / "trending_skills.txt") as f:
 @st.cache_data
 def extract_text(file):
 
+    import io
+
     text = ""
 
-    with pdfplumber.open(pdf_file) as pdf:
+    pdf_bytes = file.read()
+
+    with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
         for page in pdf.pages:
-            if page.extract_text():
-                text += page.extract_text() + " "
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text + " "
 
     return text.lower()
-
 def detect_skills(text):
     # Ensure skills are strings
     return [str(skill) for skill in skills if skill in text]
@@ -502,6 +506,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
