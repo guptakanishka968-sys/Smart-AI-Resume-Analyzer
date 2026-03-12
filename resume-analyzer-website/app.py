@@ -260,7 +260,7 @@ with tab1:
     # ---------------------------
     # Column 1: File uploader + animation
     # ---------------------------
-    with col1:
+ with col1:
 
     st_lottie(lottie_upload, height=120)
 
@@ -505,6 +505,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
