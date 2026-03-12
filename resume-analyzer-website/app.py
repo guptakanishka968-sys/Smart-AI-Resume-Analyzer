@@ -294,8 +294,8 @@ with tab1:
             # ---------------------------
             resume_text_lower = resume_text.lower()
 
-           experience_matches = re.findall(r"\binternship\b|\bexperience\b", resume_text_lower)
-           experience_count = len(experience_matches)
+            experience_matches = re.findall(r"\binternship\b|\bexperience\b", resume_text_lower)
+            experience_count = len(experience_matches)
 
             # Count experience and project mentions **once per keyword**
             import re
@@ -516,6 +516,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
