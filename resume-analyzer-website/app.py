@@ -266,10 +266,10 @@ with tab1:
 
         uploaded_file = st.file_uploader(
             "Upload Resume PDF",
-            type="pdf"
+             type="pdf"
         )
 
-       if uploaded_file:
+        if uploaded_file:
 
     # ---------------------------
     # 1️⃣ Extract text from resume
@@ -505,6 +505,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
