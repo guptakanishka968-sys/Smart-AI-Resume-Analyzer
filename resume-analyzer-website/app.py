@@ -434,7 +434,7 @@ with tab3:
 
     if question:
 
-    q = question.lower()
+        q = question.lower()
 
     if "resume" in q:
         st.write("Add measurable achievements, projects and quantified results.")
@@ -502,6 +502,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
