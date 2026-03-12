@@ -269,143 +269,132 @@ with tab1:
             type="pdf"
         )
 
-        if uploaded_file:
+       if uploaded_file:
 
-            # ---------------------------
-            # 1️⃣ Extract text from resume
-            # ---------------------------
-            with st.spinner("Analyzing your resume... Please wait"):
-                resume_text = extract_text(uploaded_file)
-            st.success(f"{uploaded_file.name} uploaded successfully")
+    # ---------------------------
+    # 1️⃣ Extract text from resume
+    # ---------------------------
+    with st.spinner("Analyzing your resume... Please wait"):
+        resume_text = extract_text(uploaded_file)
 
-            # ---------------------------
-            # 2️⃣ Detect skills from resume
-            # ---------------------------
-            found_skills = [skill for skill in skills if skill.lower() in resume_text.lower()]
+    st.success(f"{uploaded_file.name} uploaded successfully")
 
-            # ---------------------------
-            # 3️⃣ Predict role and missing skills
-            # ---------------------------
-            predicted_role = predict_role(found_skills)
-            missing_skills = [s for s in roles[predicted_role] if s not in found_skills]
+    # ---------------------------
+    # 2️⃣ Detect skills from resume
+    # ---------------------------
+    found_skills = [skill for skill in skills if skill.lower() in resume_text.lower()]
 
-            # ---------------------------
-            # 4️⃣ Enhanced ATS Simulation (Skills + Experience + Projects)
-            # ---------------------------
-            resume_text_lower = resume_text.lower()
+    # ---------------------------
+    # 3️⃣ Predict role and missing skills
+    # ---------------------------
+    predicted_role = predict_role(found_skills)
+    missing_skills = [s for s in roles[predicted_role] if s not in found_skills]
 
-            experience_matches = re.findall(r"\binternship\b|\bexperience\b", resume_text_lower)
-            experience_count = len(experience_matches)
+    # ---------------------------
+    # 4️⃣ Enhanced ATS Simulation
+    # ---------------------------
+    import re
+    resume_text_lower = resume_text.lower()
 
-            # Count experience and project mentions **once per keyword**
-            import re
+    experience_matches = re.findall(r"\binternship\b|\bexperience\b", resume_text_lower)
+    experience_count = len(experience_matches)
 
-            # Count only occurrences of the word "project"
-            project_matches = re.findall(r"\bproject\b", resume_text_lower)
-            project_count = len(project_matches)
+    project_matches = re.findall(r"\bproject\b", resume_text_lower)
+    project_count = len(project_matches)
 
-            # Skills matching
-            required_skills_lower = [s.lower() for s in roles[predicted_role]]
-            found_skills_lower = [s.lower() for s in found_skills]
-            matched_skills = [s for s in required_skills_lower if s in found_skills_lower]
+    required_skills_lower = [s.lower() for s in roles[predicted_role]]
+    found_skills_lower = [s.lower() for s in found_skills]
+    matched_skills = [s for s in required_skills_lower if s in found_skills_lower]
 
-            # ATS weights
-            skill_weight = 0.6
-            experience_weight = 0.2
-            project_weight = 0.2
+    skill_weight = 0.6
+    experience_weight = 0.2
+    project_weight = 0.2
 
-            # Individual scores
-            skill_score = len(matched_skills) / len(required_skills_lower) if required_skills_lower else 0
-            experience_score = min(experience_count / 5, 1)
-            project_score = min(project_count / 5, 1)
+    skill_score = len(matched_skills) / len(required_skills_lower) if required_skills_lower else 0
+    experience_score = min(experience_count / 5, 1)
+    project_score = min(project_count / 5, 1)
 
-            # Final ATS score
-            ats_score = int(
-                (skill_score*skill_weight + experience_score*experience_weight + project_score*project_weight) * 100
-            )
+    ats_score = int(
+        (skill_score*skill_weight + experience_score*experience_weight + project_score*project_weight) * 100
+    )
 
-            # Display ATS results
-            st.subheader("ATS Simulation (Skills + Experience + Projects)")
-            st.write(f"✅ **Predicted Role:** {predicted_role}")
-            st.write(f"✅ **ATS Score:** {ats_score}%")
-            st.write("Matched Skills:", ", ".join(matched_skills) if matched_skills else "None")
-            missing_from_role = [s for s in required_skills_lower if s not in matched_skills]
-            st.write("Missing Skills:", ", ".join(missing_from_role) if missing_from_role else "None")
-            st.write(f"Experience Mentions: {experience_count}")
-            st.write(f"Project Mentions: {project_count}")
-            st.progress(ats_score / 100)
-            # ---------------------------
-            # Resume Improvement Suggestions
-            # ---------------------------
-            st.subheader("Resume Improvement Suggestions")
+    # Display ATS
+    st.subheader("ATS Simulation (Skills + Experience + Projects)")
+    st.write(f"✅ **Predicted Role:** {predicted_role}")
+    st.write(f"✅ **ATS Score:** {ats_score}%")
 
-            suggestions = []
+    st.write("Matched Skills:", ", ".join(matched_skills) if matched_skills else "None")
 
-            # Suggest missing skills
-            if missing_from_role:
-              suggestions.append("Add these important skills: " + ", ".join(missing_from_role[:5]))
+    missing_from_role = [s for s in required_skills_lower if s not in matched_skills]
+    st.write("Missing Skills:", ", ".join(missing_from_role) if missing_from_role else "None")
 
-            # Suggest more projects
-            if project_count < 2:
-              suggestions.append("Add more projects to strengthen your profile.")
+    st.write(f"Experience Mentions: {experience_count}")
+    st.write(f"Project Mentions: {project_count}")
 
-            # Suggest experience
-            if experience_count == 0:
-              suggestions.append("Include internship or work experience if available.")
+    st.progress(ats_score / 100)
 
-            # Suggest measurable achievements
-            if "%" not in resume_text:
-              suggestions.append("Add measurable achievements (e.g., improved system by 30%).")
+    # ---------------------------
+    # Resume Suggestions
+    # ---------------------------
+    st.subheader("Resume Improvement Suggestions")
 
-            # Display suggestions
-            if suggestions:
-              for s in suggestions:
-                st.write("•", s)
-            else:
-              st.success("Your resume looks strong for ATS!")
+    suggestions = []
 
-            # ------ ---------------------
-            # Column 2: Skills display, Graphs & WordCloud
-           # ---------------------------
-     with col2:
+    if missing_from_role:
+        suggestions.append("Add these important skills: " + ", ".join(missing_from_role[:5]))
 
-            if uploaded_file:
+    if project_count < 2:
+        suggestions.append("Add more projects to strengthen your profile.")
 
-            # Display detected skills
-                st.subheader("Detected Skills")
-                st.write(", ".join(found_skills) if found_skills else "No skills detected")
+    if experience_count == 0:
+        suggestions.append("Include internship or work experience if available.")
 
-            # Display missing skills for predicted role
-                st.subheader("Missing Skills for Predicted Role")
-                st.write(", ".join(missing_skills) if missing_skills else "None")
+    if "%" not in resume_text:
+        suggestions.append("Add measurable achievements (e.g., improved system by 30%).")
 
-            # ---------------------------
-            # Graph: Matched vs Missing Skills
-            # ---------------------------
-                required_skills_lower = [s.lower() for s in roles[predicted_role]]
-                found_skills_lower = [s.lower() for s in found_skills]
+    if suggestions:
+        for s in suggestions:
+            st.write("•", s)
+    else:
+        st.success("Your resume looks strong for ATS!")
 
-                skill_counts = [1 if s in found_skills_lower else 0 for s in required_skills_lower]
-                colors = ['green' if val == 1 else 'red' for val in skill_counts]
 
-                fig, ax = plt.subplots(figsize=(8,4))
-                ax.bar(required_skills_lower, skill_counts, color=colors)
-                ax.set_ylim(0, 1.2)
-                ax.set_ylabel("Matched (1) or Missing (0)")
-                ax.set_title("Skills Match for Predicted Role")
-                plt.xticks(rotation=45, ha='right')
-                st.pyplot(fig)
-
-            # ---------------------------
-            # WordCloud
-            # ---------------------------
-               wordcloud = WordCloud(width=500, height=250).generate(" ".join(found_skills))
-               fig_wc, ax_wc = plt.subplots(figsize=(8,4))
-               ax_wc.imshow(wordcloud, interpolation='bilinear')
-               ax_wc.axis('off')
-               st.pyplot(fig_wc)
-# ------------------------------
 # ---------------------------
+# Column 2
+# ---------------------------
+with col2:
+
+    if uploaded_file:
+
+        st.subheader("Detected Skills")
+        st.write(", ".join(found_skills) if found_skills else "No skills detected")
+
+        st.subheader("Missing Skills for Predicted Role")
+        st.write(", ".join(missing_skills) if missing_skills else "None")
+
+        # Graph
+        required_skills_lower = [s.lower() for s in roles[predicted_role]]
+        found_skills_lower = [s.lower() for s in found_skills]
+
+        skill_counts = [1 if s in found_skills_lower else 0 for s in required_skills_lower]
+        colors = ['green' if val == 1 else 'red' for val in skill_counts]
+
+        fig, ax = plt.subplots(figsize=(8,4))
+        ax.bar(required_skills_lower, skill_counts, color=colors)
+        ax.set_ylim(0, 1.2)
+        ax.set_ylabel("Matched (1) or Missing (0)")
+        ax.set_title("Skills Match for Predicted Role")
+
+        plt.xticks(rotation=45, ha='right')
+        st.pyplot(fig)
+
+        # WordCloud
+        wordcloud = WordCloud(width=500, height=250).generate(" ".join(found_skills))
+        fig_wc, ax_wc = plt.subplots(figsize=(8,4))
+        ax_wc.imshow(wordcloud, interpolation='bilinear')
+        ax_wc.axis('off')
+
+        st.pyplot(fig_wc)
 # TAB 2: Trending Skills Recommendations
 # ---------------------------
 with tab2:
@@ -516,6 +505,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
