@@ -275,7 +275,7 @@ with tab1:
             # 1️⃣ Extract text from resume
             # ---------------------------
             with st.spinner("Analyzing your resume... Please wait"):
-    resume_text = extract_text(uploaded_file)
+            resume_text = extract_text(uploaded_file)
             st.success(f"{uploaded_file.name} uploaded successfully")
 
             # ---------------------------
@@ -516,6 +516,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
