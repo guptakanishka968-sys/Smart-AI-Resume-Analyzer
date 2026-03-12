@@ -262,101 +262,103 @@ with tab1:
     # ---------------------------
     with col1:
 
-        st_lottie(lottie_upload, height=120)
+    st_lottie(lottie_upload, height=120)
 
-        uploaded_file = st.file_uploader(
-            "Upload Resume PDF",
-             type="pdf"
-        )
-
-        if uploaded_file:
-
-    # ---------------------------
-    # 1️⃣ Extract text from resume
-    # ---------------------------
-    with st.spinner("Analyzing your resume... Please wait"):
-        resume_text = extract_text(uploaded_file)
-
-    st.success(f"{uploaded_file.name} uploaded successfully")
-
-    # ---------------------------
-    # 2️⃣ Detect skills from resume
-    # ---------------------------
-    found_skills = [skill for skill in skills if skill.lower() in resume_text.lower()]
-
-    # ---------------------------
-    # 3️⃣ Predict role and missing skills
-    # ---------------------------
-    predicted_role = predict_role(found_skills)
-    missing_skills = [s for s in roles[predicted_role] if s not in found_skills]
-
-    # ---------------------------
-    # 4️⃣ Enhanced ATS Simulation
-    # ---------------------------
-    import re
-    resume_text_lower = resume_text.lower()
-
-    experience_matches = re.findall(r"\binternship\b|\bexperience\b", resume_text_lower)
-    experience_count = len(experience_matches)
-
-    project_matches = re.findall(r"\bproject\b", resume_text_lower)
-    project_count = len(project_matches)
-
-    required_skills_lower = [s.lower() for s in roles[predicted_role]]
-    found_skills_lower = [s.lower() for s in found_skills]
-    matched_skills = [s for s in required_skills_lower if s in found_skills_lower]
-
-    skill_weight = 0.6
-    experience_weight = 0.2
-    project_weight = 0.2
-
-    skill_score = len(matched_skills) / len(required_skills_lower) if required_skills_lower else 0
-    experience_score = min(experience_count / 5, 1)
-    project_score = min(project_count / 5, 1)
-
-    ats_score = int(
-        (skill_score*skill_weight + experience_score*experience_weight + project_score*project_weight) * 100
+    uploaded_file = st.file_uploader(
+        "Upload Resume PDF",
+        type="pdf"
     )
 
-    # Display ATS
-    st.subheader("ATS Simulation (Skills + Experience + Projects)")
-    st.write(f"✅ **Predicted Role:** {predicted_role}")
-    st.write(f"✅ **ATS Score:** {ats_score}%")
+    if uploaded_file:
 
-    st.write("Matched Skills:", ", ".join(matched_skills) if matched_skills else "None")
+        # ---------------------------
+        # 1️⃣ Extract text from resume
+        # ---------------------------
+        with st.spinner("Analyzing your resume... Please wait"):
+            resume_text = extract_text(uploaded_file)
 
-    missing_from_role = [s for s in required_skills_lower if s not in matched_skills]
-    st.write("Missing Skills:", ", ".join(missing_from_role) if missing_from_role else "None")
+        st.success(f"{uploaded_file.name} uploaded successfully")
 
-    st.write(f"Experience Mentions: {experience_count}")
-    st.write(f"Project Mentions: {project_count}")
+        # ---------------------------
+        # 2️⃣ Detect skills from resume
+        # ---------------------------
+        found_skills = [skill for skill in skills if skill.lower() in resume_text.lower()]
 
-    st.progress(ats_score / 100)
+        # ---------------------------
+        # 3️⃣ Predict role and missing skills
+        # ---------------------------
+        predicted_role = predict_role(found_skills)
+        missing_skills = [s for s in roles[predicted_role] if s not in found_skills]
 
-    # ---------------------------
-    # Resume Suggestions
-    # ---------------------------
-    st.subheader("Resume Improvement Suggestions")
+        # ---------------------------
+        # 4️⃣ Enhanced ATS Simulation
+        # ---------------------------
+        import re
+        resume_text_lower = resume_text.lower()
 
-    suggestions = []
+        experience_matches = re.findall(r"\binternship\b|\bexperience\b", resume_text_lower)
+        experience_count = len(experience_matches)
 
-    if missing_from_role:
-        suggestions.append("Add these important skills: " + ", ".join(missing_from_role[:5]))
+        project_matches = re.findall(r"\bproject\b", resume_text_lower)
+        project_count = len(project_matches)
 
-    if project_count < 2:
-        suggestions.append("Add more projects to strengthen your profile.")
+        required_skills_lower = [s.lower() for s in roles[predicted_role]]
+        found_skills_lower = [s.lower() for s in found_skills]
+        matched_skills = [s for s in required_skills_lower if s in found_skills_lower]
 
-    if experience_count == 0:
-        suggestions.append("Include internship or work experience if available.")
+        skill_weight = 0.6
+        experience_weight = 0.2
+        project_weight = 0.2
 
-    if "%" not in resume_text:
-        suggestions.append("Add measurable achievements (e.g., improved system by 30%).")
+        skill_score = len(matched_skills) / len(required_skills_lower) if required_skills_lower else 0
+        experience_score = min(experience_count / 5, 1)
+        project_score = min(project_count / 5, 1)
 
-    if suggestions:
-        for s in suggestions:
-            st.write("•", s)
-    else:
-        st.success("Your resume looks strong for ATS!")
+        ats_score = int(
+            (skill_score * skill_weight +
+             experience_score * experience_weight +
+             project_score * project_weight) * 100
+        )
+
+        # Display ATS
+        st.subheader("ATS Simulation (Skills + Experience + Projects)")
+        st.write(f"✅ **Predicted Role:** {predicted_role}")
+        st.write(f"✅ **ATS Score:** {ats_score}%")
+
+        st.write("Matched Skills:", ", ".join(matched_skills) if matched_skills else "None")
+
+        missing_from_role = [s for s in required_skills_lower if s not in matched_skills]
+        st.write("Missing Skills:", ", ".join(missing_from_role) if missing_from_role else "None")
+
+        st.write(f"Experience Mentions: {experience_count}")
+        st.write(f"Project Mentions: {project_count}")
+
+        st.progress(ats_score / 100)
+
+        # ---------------------------
+        # Resume Suggestions
+        # ---------------------------
+        st.subheader("Resume Improvement Suggestions")
+
+        suggestions = []
+
+        if missing_from_role:
+            suggestions.append("Add these important skills: " + ", ".join(missing_from_role[:5]))
+
+        if project_count < 2:
+            suggestions.append("Add more projects to strengthen your profile.")
+
+        if experience_count == 0:
+            suggestions.append("Include internship or work experience if available.")
+
+        if "%" not in resume_text:
+            suggestions.append("Add measurable achievements (e.g., improved system by 30%).")
+
+        if suggestions:
+            for s in suggestions:
+                st.write("•", s)
+        else:
+            st.success("Your resume looks strong for ATS!")
 
 
 # ---------------------------
@@ -393,25 +395,23 @@ with col2:
         fig_wc, ax_wc = plt.subplots(figsize=(8,4))
         ax_wc.imshow(wordcloud, interpolation='bilinear')
         ax_wc.axis('off')
-
         st.pyplot(fig_wc)
-# TAB 2: Trending Skills Recommendations
+
+
+# ---------------------------
+# TAB 2
 # ---------------------------
 with tab2:
 
     st_lottie(lottie_skills, height=120)
+    st.subheader("Trending Skills Recommendations")
 
-    st.subheader("Trending Skills Recommendations")  # Heading always visible
-
-    # Initialize toggle state for button
     if "show_trending" not in st.session_state:
         st.session_state["show_trending"] = False
 
-    # Streamlit button
     if st.button("Show Trending Skills"):
-        st.session_state["show_trending"] = True  # Toggle to show skills
+        st.session_state["show_trending"] = True
 
-    # Display trending skills numbered
     if st.session_state["show_trending"]:
         if trending_skills:
             for i, skill in enumerate(trending_skills, start=1):
