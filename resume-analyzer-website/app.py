@@ -294,12 +294,15 @@ with tab1:
             # ---------------------------
             resume_text_lower = resume_text.lower()
 
-            experience_keywords = ["internship", "work experience", "worked at", "role", "position"]
-            project_keywords = ["project", "developed", "built", "implemented"]
+           experience_matches = re.findall(r"\binternship\b|\bexperience\b", resume_text_lower)
+experience_count = len(experience_matches)
 
             # Count experience and project mentions **once per keyword**
-            experience_count = sum(1 for word in experience_keywords if word in resume_text_lower)
-            project_count = sum(1 for word in project_keywords if word in resume_text_lower)
+            import re
+
+            # Count only occurrences of the word "project"
+            project_matches = re.findall(r"\bproject\b", resume_text_lower)
+            project_count = len(project_matches)
 
             # Skills matching
             required_skills_lower = [s.lower() for s in roles[predicted_role]]
@@ -445,32 +448,47 @@ with tab3:
 
     if question:
 
-        q = question.lower()
+    q = question.lower()
 
-        if "resume" in q:
+    if "resume" in q:
+        st.write("Add measurable achievements, projects and quantified results.")
 
-            st.write(
-                "Add measurable achievements, projects and quantified results."
-            )
+    elif "skills" in q:
+        st.write("Focus on Python, SQL, React, Power BI, Machine Learning.")
 
-        elif "skills" in q:
+    elif "placement" in q or "interview" in q:
+        st.write("Practice DSA, build projects and prepare system design.")
 
-            st.write(
-                "Focus on Python, SQL, React, Power BI, Machine Learning."
-            )
+    elif "project" in q:
+        st.write("Build 2–4 strong projects that solve real problems and upload them on GitHub.")
 
-        elif "placement" in q or "interview" in q:
+    elif "internship" in q:
+        st.write("Apply on LinkedIn, Internshala and company career portals. Strong projects increase your chances.")
 
-            st.write(
-                "Practice DSA, build projects and prepare system design."
-            )
+    elif "coding" in q or "dsa" in q:
+        st.write("Practice data structures and algorithms regularly on platforms like LeetCode and HackerRank.")
 
-        else:
+    # Language related keywords
+    elif "python" in q:
+        st.write("Python is widely used in AI, Data Science, Automation and Web Development. Learn libraries like Pandas, NumPy and Flask.")
 
-            st.write(
-                "Focus on projects, internships and real-world skills."
-            )
+    elif "java" in q:
+        st.write("Java is widely used for backend development and enterprise applications. Focus on OOP, Spring Boot and DSA.")
 
+    elif "c++" in q or "cpp" in q:
+        st.write("C++ is commonly used for competitive programming and system programming. Master STL and DSA.")
+
+    elif "javascript" in q or "js" in q:
+        st.write("JavaScript is essential for web development. Learn React, Node.js and modern ES6 features.")
+
+    elif "sql" in q:
+        st.write("SQL is important for database management. Learn joins, queries, indexing and database optimization.")
+
+    elif "machine learning" in q or "ai" in q:
+        st.write("Start with Python, statistics, machine learning algorithms and build ML projects.")
+
+    else:
+        st.write("Focus on projects, internships and real-world skills.")
 # ------------------------------
 # Session History
 # ------------------------------
@@ -498,6 +516,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
