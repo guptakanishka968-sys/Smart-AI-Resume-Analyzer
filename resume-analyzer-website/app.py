@@ -366,8 +366,8 @@ with tab1:
 
             # ------ ---------------------
             # Column 2: Skills display, Graphs & WordCloud
-            # ---------------------------
-         with col2:
+           # ---------------------------
+     with col2:
 
             if uploaded_file:
 
@@ -516,6 +516,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
