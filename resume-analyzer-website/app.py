@@ -372,38 +372,38 @@ with tab1:
             if uploaded_file:
 
             # Display detected skills
-              st.subheader("Detected Skills")
-              st.write(", ".join(found_skills) if found_skills else "No skills detected")
+                st.subheader("Detected Skills")
+                st.write(", ".join(found_skills) if found_skills else "No skills detected")
 
             # Display missing skills for predicted role
-              st.subheader("Missing Skills for Predicted Role")
-              st.write(", ".join(missing_skills) if missing_skills else "None")
+                st.subheader("Missing Skills for Predicted Role")
+                st.write(", ".join(missing_skills) if missing_skills else "None")
 
             # ---------------------------
             # Graph: Matched vs Missing Skills
             # ---------------------------
-              required_skills_lower = [s.lower() for s in roles[predicted_role]]
-              found_skills_lower = [s.lower() for s in found_skills]
+                required_skills_lower = [s.lower() for s in roles[predicted_role]]
+                found_skills_lower = [s.lower() for s in found_skills]
 
-              skill_counts = [1 if s in found_skills_lower else 0 for s in required_skills_lower]
-              colors = ['green' if val == 1 else 'red' for val in skill_counts]
+                skill_counts = [1 if s in found_skills_lower else 0 for s in required_skills_lower]
+                colors = ['green' if val == 1 else 'red' for val in skill_counts]
 
-              fig, ax = plt.subplots(figsize=(8,4))
-              ax.bar(required_skills_lower, skill_counts, color=colors)
-              ax.set_ylim(0, 1.2)
-              ax.set_ylabel("Matched (1) or Missing (0)")
-              ax.set_title("Skills Match for Predicted Role")
-              plt.xticks(rotation=45, ha='right')
-              st.pyplot(fig)
+                fig, ax = plt.subplots(figsize=(8,4))
+                ax.bar(required_skills_lower, skill_counts, color=colors)
+                ax.set_ylim(0, 1.2)
+                ax.set_ylabel("Matched (1) or Missing (0)")
+                ax.set_title("Skills Match for Predicted Role")
+                plt.xticks(rotation=45, ha='right')
+                st.pyplot(fig)
 
             # ---------------------------
             # WordCloud
             # ---------------------------
-              wordcloud = WordCloud(width=500, height=250).generate(" ".join(found_skills))
-              fig_wc, ax_wc = plt.subplots(figsize=(8,4))
-              ax_wc.imshow(wordcloud, interpolation='bilinear')
-              ax_wc.axis('off')
-              st.pyplot(fig_wc)
+               wordcloud = WordCloud(width=500, height=250).generate(" ".join(found_skills))
+               fig_wc, ax_wc = plt.subplots(figsize=(8,4))
+               ax_wc.imshow(wordcloud, interpolation='bilinear')
+               ax_wc.axis('off')
+               st.pyplot(fig_wc)
 # ------------------------------
 # ---------------------------
 # TAB 2: Trending Skills Recommendations
@@ -516,6 +516,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
