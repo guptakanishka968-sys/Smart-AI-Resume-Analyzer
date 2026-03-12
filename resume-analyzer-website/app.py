@@ -202,7 +202,8 @@ with open(base_path / "trending_skills.txt") as f:
 # ------------------------------
 # Utility Functions
 # ------------------------------
-def extract_text(pdf_file):
+@st.cache_data
+def extract_text(file):
 
     text = ""
 
@@ -273,7 +274,8 @@ with tab1:
             # ---------------------------
             # 1️⃣ Extract text from resume
             # ---------------------------
-            resume_text = extract_text(uploaded_file)
+            with st.spinner("Analyzing your resume... Please wait"):
+    resume_text = extract_text(uploaded_file)
             st.success(f"{uploaded_file.name} uploaded successfully")
 
             # ---------------------------
@@ -329,13 +331,42 @@ with tab1:
             st.write(f"Experience Mentions: {experience_count}")
             st.write(f"Project Mentions: {project_count}")
             st.progress(ats_score / 100)
+            # ---------------------------
+            # Resume Improvement Suggestions
+            # ---------------------------
+            st.subheader("Resume Improvement Suggestions")
 
-    # ---------------------------
-    # Column 2: Skills display, Graphs & WordCloud
-    # ---------------------------
-    with col2:
+            suggestions = []
 
-        if uploaded_file:
+            # Suggest missing skills
+            if missing_from_role:
+            suggestions.append("Add these important skills: " + ", ".join(missing_from_role[:5]))
+
+            # Suggest more projects
+            if project_count < 2:
+            suggestions.append("Add more projects to strengthen your profile.")
+
+            # Suggest experience
+            if experience_count == 0:
+            suggestions.append("Include internship or work experience if available.")
+
+            # Suggest measurable achievements
+            if "%" not in resume_text:
+            suggestions.append("Add measurable achievements (e.g., improved system by 30%).")
+
+            # Display suggestions
+            if suggestions:
+            for s in suggestions:
+            st.write("•", s)
+            else:
+            st.success("Your resume looks strong for ATS!")
+
+            # ---------------------------
+            # Column 2: Skills display, Graphs & WordCloud
+            # ---------------------------
+            with col2:
+
+            if uploaded_file:
 
             # Display detected skills
             st.subheader("Detected Skills")
@@ -365,7 +396,7 @@ with tab1:
             # ---------------------------
             # WordCloud
             # ---------------------------
-            wordcloud = WordCloud(width=800, height=400).generate(" ".join(found_skills))
+            wordcloud = WordCloud(width=500, height=250).generate(" ".join(found_skills))
             fig_wc, ax_wc = plt.subplots(figsize=(8,4))
             ax_wc.imshow(wordcloud, interpolation='bilinear')
             ax_wc.axis('off')
@@ -467,6 +498,7 @@ for i, record in enumerate(st.session_state.history):
     st.write("Missing Skills:", ", ".join(record["missing_skills"]) if record["missing_skills"] else "None! Great job!")
 
     st.markdown("---")
+
 
 
 
