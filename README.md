@@ -6,20 +6,20 @@ identify missing skills, get ATS-based insights, and explore trending industry s
 
 ## Features
 
- Resume Analysis
- ATS Score Checking
- Skills Extraction
- Missing Skills Recommendation
- Trending Skills Suggestions
- Word Cloud Visualization
- Career AI Chat
+ Resume Analysis,
+ ATS Score Checking,
+ Skills Extraction,
+ Missing Skills Recommendation,
+ Trending Skills Suggestions,
+ Word Cloud Visualization,
+ Career AI Chat,
  Interactive Streamlit UI
 
 ## Tech Stack
 
- Python
- Streamlit
- NLP
+ Python,
+ Streamlit,
+ NLP,
  Pandas
 
 ## Live Demo
